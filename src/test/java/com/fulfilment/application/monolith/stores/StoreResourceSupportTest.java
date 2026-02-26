@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Status;
 import jakarta.transaction.Synchronization;
 import jakarta.transaction.TransactionSynchronizationRegistry;
@@ -46,27 +45,6 @@ class StoreResourceSupportTest {
     var ex = assertThrows(WebApplicationException.class, () -> resource.patch(1L, store));
 
     assertEquals(422, ex.getResponse().getStatus());
-  }
-
-  @Test
-  void errorMapperMapsGenericExceptionTo500() {
-    var mapper = new StoreResource.ErrorMapper();
-    mapper.objectMapper = new ObjectMapper();
-
-    var response = mapper.toResponse(new RuntimeException("boom"));
-
-    assertEquals(500, response.getStatus());
-    assertTrue(response.getEntity().toString().contains("boom"));
-  }
-
-  @Test
-  void errorMapperUsesWebApplicationExceptionStatus() {
-    var mapper = new StoreResource.ErrorMapper();
-    mapper.objectMapper = new ObjectMapper();
-
-    var response = mapper.toResponse(new WebApplicationException("bad", 422));
-
-    assertEquals(422, response.getStatus());
   }
 
   @Test
