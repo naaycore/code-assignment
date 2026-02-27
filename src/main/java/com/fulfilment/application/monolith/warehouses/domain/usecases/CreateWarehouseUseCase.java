@@ -32,8 +32,7 @@ public class CreateWarehouseUseCase implements CreateWarehouseOperation {
       throw new WebApplicationException("Invalid warehouse location.", 400);
     }
 
-    var activeWarehousesInLocation =
-        warehouseStore.getAll().stream().filter(w -> warehouse.location.equals(w.location)).toList();
+    var activeWarehousesInLocation = warehouseStore.getByLocation(warehouse.location);
     if (activeWarehousesInLocation.size() >= location.maxNumberOfWarehouses) {
       throw new WebApplicationException(
           "Maximum number of warehouses for this location has been reached.", 400);

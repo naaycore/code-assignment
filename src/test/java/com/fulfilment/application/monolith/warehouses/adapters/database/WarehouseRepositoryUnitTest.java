@@ -36,6 +36,30 @@ class WarehouseRepositoryUnitTest {
   }
 
   @Test
+  void getByLocationFiltersWarehousesInMemory() {
+    var first = dbWarehouse("MWH.1", "ZWOLLE-001", 10, 3);
+    var second = dbWarehouse("MWH.2", "AMSTERDAM-001", 12, 6);
+    var third = dbWarehouse("MWH.3", "ZWOLLE-001", 8, 2);
+    repository.register("archivedAt is null", List.of(first, second, third), first);
+
+    var result = repository.getByLocation("ZWOLLE-001");
+
+    assertEquals(2, result.size());
+    assertEquals("MWH.1", result.get(0).businessUnitCode);
+    assertEquals("MWH.3", result.get(1).businessUnitCode);
+  }
+
+  @Test
+  void getByLocationReturnsEmptyWhenNothingMatches() {
+    var first = dbWarehouse("MWH.1", "ZWOLLE-001", 10, 3);
+    repository.register("archivedAt is null", List.of(first), first);
+
+    var result = repository.getByLocation("TILBURG-001");
+
+    assertEquals(0, result.size());
+  }
+
+  @Test
   void createMapsDomainToDbWarehouseAndPersists() {
     var warehouse = new Warehouse();
     warehouse.businessUnitCode = "MWH.2";

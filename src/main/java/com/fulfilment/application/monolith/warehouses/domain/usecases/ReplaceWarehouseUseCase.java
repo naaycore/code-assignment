@@ -43,8 +43,7 @@ public class ReplaceWarehouseUseCase implements ReplaceWarehouseOperation {
       throw new WebApplicationException("Invalid warehouse location.", 400);
     }
 
-    var warehousesInLocation =
-        warehouseStore.getAll().stream().filter(w -> newWarehouse.location.equals(w.location)).toList();
+    var warehousesInLocation = warehouseStore.getByLocation(newWarehouse.location);
     int currentCount = warehousesInLocation.size();
     int adjustedCount =
         newWarehouse.location.equals(currentWarehouse.location) ? currentCount : currentCount + 1;
