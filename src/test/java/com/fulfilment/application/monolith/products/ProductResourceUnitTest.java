@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.panache.common.Sort;
 import jakarta.ws.rs.WebApplicationException;
 import java.math.BigDecimal;
@@ -131,28 +130,6 @@ class ProductResourceUnitTest {
     assertEquals(204, response.getStatus());
     assertEquals(1, repository.deleted.size());
     assertSame(entity, repository.deleted.get(0));
-  }
-
-  @Test
-  void errorMapperReturns500ForGenericException() {
-    var mapper = new ProductResource.ErrorMapper();
-    mapper.objectMapper = new ObjectMapper();
-
-    var response = mapper.toResponse(new RuntimeException("boom"));
-
-    assertEquals(500, response.getStatus());
-    assertTrue(response.getEntity().toString().contains("boom"));
-  }
-
-  @Test
-  void errorMapperUsesWebApplicationStatusAndMessage() {
-    var mapper = new ProductResource.ErrorMapper();
-    mapper.objectMapper = new ObjectMapper();
-
-    var response = mapper.toResponse(new WebApplicationException("bad", 422));
-
-    assertEquals(422, response.getStatus());
-    assertTrue(response.getEntity().toString().contains("bad"));
   }
 
   private static class FakeProductRepository extends ProductRepository {

@@ -6,6 +6,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @ApplicationScoped
 public class WarehouseRepository implements WarehouseStore, PanacheRepository<DbWarehouse> {
@@ -13,6 +14,11 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Override
   public List<Warehouse> getAll() {
     return this.find("archivedAt is null").list().stream().map(DbWarehouse::toWarehouse).toList();
+  }
+
+  @Override
+  public List<Warehouse> getByLocation(String location) {
+    return getAll().stream().filter(warehouse -> Objects.equals(warehouse.location, location)).toList();
   }
 
   @Override
